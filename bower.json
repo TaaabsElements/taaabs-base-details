@@ -1,0 +1,27 @@
+{
+  "name": "taaabs-base-details",
+  "version": "1.0.0",
+  "description": "A graphical element that load and display the informations of a base.",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "taaabs"
+  ],
+  "authors": [
+    "Rémi Casado"
+  ],
+  "repository": {
+   "type": "git",
+   "url": "https://github.com/TaaabsElements/taaabs-base-details.git"
+  },
+  "main": "taaabs-base-details.html",
+  "license": "https://github.com/TaaabsElements/taaabs-base-details/LICENSE",
+  "dependencies": {
+    "polymer": "polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "polymerelements/iron-component-page#^1.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "ignore": []
+}
