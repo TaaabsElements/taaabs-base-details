@@ -17,8 +17,6 @@
     <style>
       :host {
         display: block;
-        width: 100%;
-        height: 100%;
       }
 
       table {
@@ -415,7 +413,7 @@
 
       attached: function() {
         // Load i18n json.
-        this.loadResources(this.resolveUrl('./locales.json'));
+        this.loadResources(this.resolveUrl('./languages/locales.json'));
         // Listen for base creation
         this.$.tbc.addEventListener('BASE_CREATED', function() {
           this.fire('RESOURCE_CHANGED');
