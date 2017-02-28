@@ -1,19 +1,17 @@
 <!-- THEME -->
-<link rel="import" href="../taaabs-themes/taaabs-dark-theme.html">
+<link rel="import" href="../taaabs-themes/taaabs-theme.html">
 <!-- POLYMER APP HELPERS -->
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
 <!-- Iron elements -->
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
-<!-- BASE -->
-<link rel="import" href="../taaabs-base-create/taaabs-base-create.html">
 <!-- ENOUGH WITH THE DEPENDENCIES !! -->
 <dom-module id="taaabs-base-details">
 
 
   <template>
-    <style include="taaabs-dark-theme"></style>
+    <style include="taaabs-theme"></style>
     <style>
       :host {
         display: block;
@@ -72,12 +70,6 @@
         opacity: 1;
       }
 
-      .baseLine:hover {
-        cursor: pointer;
-        background-color: #2e3842;
-        color: white;
-      }
-
       :host #bgModal {
         position: absolute;
         top: 0px;
@@ -105,18 +97,6 @@
         padding: 1em;
       }
     </style>
-
-    <!-- Modal for Base Creation -->
-
-    <div id="bgModal">
-      <div id="contentModal" class="bgWhite">
-        <iron-pages selected="{{_modalIndex}}">
-          <div>
-            <taaabs-base-create id="tbc" source="[[_base]]" language="{{language}}" in-base></taaabs-base-create>
-          </div>
-        </iron-pages>
-      </div>
-    </div>
 
     <!-- Title -->
 
@@ -156,8 +136,6 @@
     </div>
 
     <!-- Child Base List -->
-
-    <iron-icon style="float:right; cursor: pointer;padding-bottom:5px" class="fgDarkBlue fgDarkBlueH" icon="icons:add-circle-outline" on-click="_createBase"></iron-icon>
     <h4 style="margin-bottom: 0px">Bases</h4>
     <table>
       <tr>
@@ -167,7 +145,7 @@
         <th></th>
       </tr>
       <template is="dom-repeat" items="{{_bases}}">
-        <tr on-click="_resourceClicked" class="baseLine">
+        <tr on-click="_resourceClicked" class="hoverable clickable">
           <td> <span>{{item.id}}</span> </td>
           <td> <span>{{item.label}}</span> </td>
           <td> <span>{{item.comment}}</span> </td>
@@ -188,7 +166,7 @@
         <th> Description </th>
       </tr>
       <template is="dom-repeat" items="{{_storedTraces}}">
-        <tr on-click="_resourceClicked" class="baseLine">
+        <tr on-click="_resourceClicked" class="hoverable clickable">
           <td> <span>{{item.id}}</span> </td>
           <td> <span>{{item.label}}</span> </td>
           <td> <span>{{item.comment}}</span> </td>
@@ -206,7 +184,7 @@
         <th> Description </th>
       </tr>
       <template is="dom-repeat" items="{{_computedTraces}}">
-        <tr on-click="_resourceClicked" class="baseLine">
+        <tr on-click="_resourceClicked" class="hoverable clickable">
           <td> <span>{{item.id}}</span> </td>
           <td> <span>{{item.label}}</span> </td>
           <td> <span>{{item.comment}}</span> </td>
@@ -224,7 +202,7 @@
         <th> Description </th>
       </tr>
       <template is="dom-repeat" items="{{_traceModels}}">
-        <tr on-click="_resourceClicked" class="baseLine">
+        <tr on-click="_resourceClicked" class="hoverable clickable">
           <td> <span>{{item.id}}</span> </td>
           <td> <span>{{item.label}}</span> </td>
           <td> <span>{{item.comment}}</span> </td>
@@ -414,19 +392,6 @@
       attached: function() {
         // Load i18n json.
         this.loadResources(this.resolveUrl('./languages/locales.json'));
-        // Listen for base creation
-        this.$.tbc.addEventListener('BASE_CREATED', function() {
-          this.fire('RESOURCE_CHANGED');
-          this.$.bgModal.style.opacity = 0;
-          this.$.bgModal.style.pointerEvents = "none";
-          window.scrollTo(0, 0);
-        }.bind(this));
-        // Close the modal if base creation is canceled
-        this.$.tbc.addEventListener('CANCEL', function() {
-          this.$.bgModal.style.opacity = 0;
-          this.$.bgModal.style.pointerEvents = "none";
-          window.scrollTo(0, 0);
-        }.bind(this));
       },
 
       /**
@@ -582,19 +547,7 @@
               console.log(err);
             });
         }
-      },
-
-      /**
-       * Triggered when the "create base" button is clicked.
-       * Show the modal.
-       *
-       * @method _createBase
-       */
-      _createBase: function() {
-        this.$.bgModal.style.opacity = 1;
-        this.$.bgModal.style.pointerEvents = "auto";
-        window.scrollTo(0, 0);
-      },
+      }
 
     });
   </script>
