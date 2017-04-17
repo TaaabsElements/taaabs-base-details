@@ -17,7 +17,7 @@
   "main": "taaabs-base-details.html",
   "license": "https://github.com/TaaabsElements/taaabs-base-details/LICENSE",
   "dependencies": {
-    "polymer": "polymer/polymer#^1.0.0",
+    "polymer": "polymer/polymer",
     "taaabs-base-create": "TaaabsElements/taaabs-base-create",
     "app-localize-behavior": "PolymerElements/app-localize-behavior",
     "iron-pages": "PolymerElements/iron-pages",

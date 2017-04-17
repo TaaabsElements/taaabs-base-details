@@ -209,6 +209,25 @@
         </tr>
       </template>
     </table>
+
+    <!-- Trace Model List -->
+
+    <h4> <span>{{localize('methods')}}</span> </h4>
+    <table>
+      <tr>
+        <th> Id </th>
+        <th> Label </th>
+        <th> Description </th>
+      </tr>
+      <template is="dom-repeat" items="{{_methods}}">
+        <tr on-click="_resourceClicked" class="hoverable clickable">
+          <td> <span>{{item.id}}</span> </td>
+          <td> <span>{{item.label}}</span> </td>
+          <td> <span>{{item.comment}}</span> </td>
+        </tr>
+      </template>
+    </table>
+
   </template>
 
   <script>
@@ -316,6 +335,20 @@
          * @type Array
          */
         _computedTraces: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+
+        /**
+         * The methods of the base.
+         *
+         * @attribute _methods
+         * @type Array
+         */
+        _methods: {
           type: Array,
           notify: true,
           value: function() {
@@ -524,6 +557,9 @@
               break;
             case 'TraceModel':
               this.push('_traceModels', resources[i]);
+              break;
+            case 'Method':
+              this.push('_methods', resources[i]);
               break;
           }
         }
