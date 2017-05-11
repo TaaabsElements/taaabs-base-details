@@ -6,6 +6,13 @@
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<!-- Paper elements -->
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
+
 <!-- ENOUGH WITH THE DEPENDENCIES !! -->
 <dom-module id="taaabs-base-details">
 
@@ -25,209 +32,247 @@
         text-align: left;
       }
 
-      dt {
-        font-weight: bold;
+      td:nth-child(2) {
+        width: 400px;
       }
 
-      #modes {
-        display: block;
-        width: 100%;
+      td:nth-child(3) {
+        width: 400px;
       }
 
-      #visuMode {
-        display: block;
-        float: left;
-        width: 100%;
-        opacity: 1;
-        -webkit-transition: opacity .3s ease-in-out;
-        -moz-transition: opacity .3s ease-in-out;
-        -ms-transition: opacity .3s ease-in-out;
-        -o-transition: opacity .3s ease-in-out;
-        transition: opacity .3s ease-in-out;
+      #base-header{
+        font-size: 16px;
       }
 
-      #editMode {
-        display: block;
-        float: left;
-        width: 100%;
-        margin-left: -100%;
-        opacity: 0;
-        pointer-events: none;
-        -webkit-transition: opacity .3s ease-in-out;
-        -moz-transition: opacity .3s ease-in-out;
-        -ms-transition: opacity .3s ease-in-out;
-        -o-transition: opacity .3s ease-in-out;
-        transition: opacity .3s ease-in-out;
+      #base-header-label{
+        font-style: italic;
+        line-height: 24px;
       }
 
       .editIcons {
         float: right;
-        opacity: 0.87;
-        cursor: pointer;
       }
 
-      .editIcons:hover {
-        opacity: 1;
+      .progress {
+        width: 100%;
+        --paper-progress-height: 10px;
+        --paper-progress-active-color: var(--paper-blue-500);
+        --paper-progress-indeterminate-cycle-duration: 1s;
       }
 
-      :host #bgModal {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.37);
-        opacity: 0;
-        pointer-events: none;
-        -webkit-transition: opacity .3s ease-in-out;
-        -moz-transition: opacity .3s ease-in-out;
-        -ms-transition: opacity .3s ease-in-out;
-        -o-transition: opacity .3s ease-in-out;
-        transition: opacity .3s ease-in-out;
+      paper-dialog: {
+        padding: 0px;
       }
 
-      :host #contentModal {
-        position: absolute;
-        top: 50vh;
-        margin-top: -200px;
-        left: 50vw;
-        margin-left: -300px;
-        width: 600px;
-        height: 400px;
-        padding: 1em;
+      :host #modify-base-progress{
+        padding: 0px;
+        margin: 0px;
       }
+
+      .resource-titles {
+        padding-bottom:5px;
+        margin-top: 30px;
+        font-weight: bold;
+      }
+
+      .base-title th {
+        border-color: var(--paper-deep-orange-500);
+      }
+
+      .model-title th {
+        border-color: var(--paper-amber-500);
+      }
+
+      .method-title th {
+        border-color: var(--paper-purple-500);
+      }
+
+      .computed-trace-title th {
+        border-color: var(--paper-blue-500);
+      }
+
+      .stored-trace-title th {
+        border-color: var(--paper-light-blue-500);
+      }
+
+      #base-list-div,
+      #model-list-div,
+      #method-list-div,
+      #computed-trace-list-div,
+      #stored-trace-list-div {
+        display: none;
+      }
+
     </style>
 
-    <!-- Title -->
 
-    <h3> <span>{{localize('baseInformations')}} : <span>{{_base.id}}</span> </h3>
+      <paper-dialog id="modify-base-dialog" class="flex-vertical">
+        <div class="flexchild">
+          <h2>[[localize('edit-your-base')]]</h2>
+          <paper-input label="[[localize('base-label')]]" value="{{_baseLabel}}"></paper-input><br/>
+          <span class="small fgGrey">[[localize('base-comment')]]</span><br/>
+          <iron-autogrow-textarea value="{{_baseComment}}"></iron-autogrow-textarea>
+          <div class="buttons">
+            <paper-button on-click="_onEditCancelClick">[[localize('editCancelIcon')]]</paper-button>
+            <paper-button on-click="_onEditConfirmClick" id="base-modify-confirm-button">[[localize('editSubmitIcon')]]</paper-button>
+          </div>
+        </div>
+        <paper-progress id="modify-base-progress" class="progress" indeterminate disabled></paper-progress>
+      </paper-dialog>
 
-    <!-- Base Main Information Divs -->
+      <div style="padding-top: 24px">
+        <iron-icon icon="icons:create" title="{{localize('editIcon')}}" class="editIcons" on-click="_onEditClick"></iron-icon>
 
-    <div id="modes">
-      <div id="visuMode">
-        <iron-icon icon="icons:create" title="{{localize('editIcon')}}" class="editIcons" id="editIcon"></iron-icon>
-        <dl>
-          <dt> Url </dt>
-          <dd> <a href="{{_base.uri}}" target="_blank"><span>{{_base.uri}}</span></a></dd>
-          <dt> Label </dt>
-          <dd> <span>{{_base.label}}</span></dd>
-          <dt> Description </dt>
-          <dd> <span>{{_base.comment}}</span></dd>
-        </dl>
+
+        <a id="base-header" href="[[_base.uri]]" target="_blank">[[_base.uri]]</a> <br/>
+        <span id="base-header-label"> [[_base.label]]   </span>
+        <p>    [[_base.comment]] </p>
+
       </div>
 
-      <div id="editMode">
-        <iron-icon icon="icons:close" class="editIcons fgRed fgRedH" title="{{localize('editCancelIcon')}}" id="editCancelIcon"></iron-icon>
-        <iron-icon icon="icons:check" class="editIcons fgGreen fgGreenH" title="{{localize('editSubmitIcon')}}" id="editSubmitIcon"></iron-icon>
-        <dl>
-          <dt> Url </dt>
-          <dd> <a href="{{_base.uri}}" target="_blank"><span>{{_base.uri}}</span></a></dd>
-          <dt> Label </dt>
-          <dd>
-            <input type="text" value="{{_baseLabel::input}}">
-          </dd>
-          <dt> Description </dt>
-          <dd>
-            <textarea value="{{_baseComment::input}}"></textarea>
-          </dd>
-        </dl>
+      <div id="base-list-div">
+        <!-- Child Base List -->
+        <div class="resource-titles">Bases</div>
+        <table>
+          <tr class="base-title">
+            <th> Id </th>
+            <th> Label </th>
+            <th> Description </th>
+            <th></th><th></th>
+          </tr>
+          <template is="dom-repeat" items="{{_bases}}">
+            <tr class="hoverable clickable">
+              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+              <td style="width:15px">
+                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+              </td>
+              <td style="width:15px">
+                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
+              </td>
+            </tr>
+          </template>
+        </table>
       </div>
-    </div>
 
-    <!-- Child Base List -->
-    <h4 style="margin-bottom: 0px">Bases</h4>
-    <table>
-      <tr>
-        <th> Id </th>
-        <th> Label </th>
-        <th> Description </th>
-        <th></th>
-      </tr>
-      <template is="dom-repeat" items="{{_bases}}">
-        <tr on-click="_resourceClicked" class="hoverable clickable">
-          <td> <span>{{item.id}}</span> </td>
-          <td> <span>{{item.label}}</span> </td>
-          <td> <span>{{item.comment}}</span> </td>
-          <td style="width:15px">
-            <iron-icon on-click='_deleteResource' icon="icons:delete" title="{{localize('delete')}}" class="fgWhite" style="height: 15px;"></iron-icon>
-          </td>
-        </tr>
-      </template>
-    </table>
+      <!-- Stored Traces List -->
 
-    <!-- Stored Traces List -->
+      <div id="stored-trace-list-div">
+        <div class="resource-titles">{{localize('storedTraces')}}</div>
+        <table>
+          <tr class="stored-trace-title">
+            <th> Id </th>
+            <th> Label </th>
+            <th> Description </th>
+            <th></th><th></th>
+          </tr>
+          <template is="dom-repeat" items="{{_storedTraces}}">
+            <tr class="hoverable clickable">
+              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+              <td style="width:15px">
+                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+              </td>
+              <td style="width:15px">
+                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
+              </td>
+            </tr>
+          </template>
+        </table>
+      </div>
 
-    <h4> <span>{{localize('storedTraces')}}</span> </h4>
-    <table>
-      <tr>
-        <th> Id </th>
-        <th> Label </th>
-        <th> Description </th>
-      </tr>
-      <template is="dom-repeat" items="{{_storedTraces}}">
-        <tr on-click="_resourceClicked" class="hoverable clickable">
-          <td> <span>{{item.id}}</span> </td>
-          <td> <span>{{item.label}}</span> </td>
-          <td> <span>{{item.comment}}</span> </td>
-        </tr>
-      </template>
-    </table>
+      <!-- Computed Traces List -->
 
-    <!-- Computed Traces List -->
+      <div id="computed-trace-list-div">
+        <div class="resource-titles">{{localize('computedTraces')}}</div>
+        <table>
+          <tr class="computed-trace-title">
+            <th> Id </th>
+            <th> Label </th>
+            <th> Description </th>
+            <th></th><th></th>
+          </tr>
+          <template is="dom-repeat" items="{{_computedTraces}}">
+            <tr class="hoverable clickable">
+              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+              <td style="width:15px">
+                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+              </td>
+              <td style="width:15px">
+                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
+              </td>
+            </tr>
+          </template>
+        </table>
+      </div>
 
-    <h4> <span>{{localize('computedTraces')}}</span> </h4>
-    <table>
-      <tr>
-        <th> Id </th>
-        <th> Label </th>
-        <th> Description </th>
-      </tr>
-      <template is="dom-repeat" items="{{_computedTraces}}">
-        <tr on-click="_resourceClicked" class="hoverable clickable">
-          <td> <span>{{item.id}}</span> </td>
-          <td> <span>{{item.label}}</span> </td>
-          <td> <span>{{item.comment}}</span> </td>
-        </tr>
-      </template>
-    </table>
+      <!-- Trace Model List -->
 
-    <!-- Trace Model List -->
+      <div id="model-list-div">
+        <div class="resource-titles">{{localize('traceModels')}}</div>
+        <table>
+          <tr class="model-title">
+            <th> Id </th>
+            <th> Label </th>
+            <th> Description </th>
+            <th></th><th></th>
+          </tr>
+          <template is="dom-repeat" items="{{_traceModels}}">
+            <tr class="hoverable clickable">
+              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+              <td style="width:15px">
+                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+              </td>
+              <td style="width:15px">
+                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
+              </td>
+            </tr>
+          </template>
+        </table>
+      </div>
 
-    <h4> <span>{{localize('traceModels')}}</span> </h4>
-    <table>
-      <tr>
-        <th> Id </th>
-        <th> Label </th>
-        <th> Description </th>
-      </tr>
-      <template is="dom-repeat" items="{{_traceModels}}">
-        <tr on-click="_resourceClicked" class="hoverable clickable">
-          <td> <span>{{item.id}}</span> </td>
-          <td> <span>{{item.label}}</span> </td>
-          <td> <span>{{item.comment}}</span> </td>
-        </tr>
-      </template>
-    </table>
+      <!-- Trace Model List -->
 
-    <!-- Trace Model List -->
-
-    <h4> <span>{{localize('methods')}}</span> </h4>
-    <table>
-      <tr>
-        <th> Id </th>
-        <th> Label </th>
-        <th> Description </th>
-      </tr>
-      <template is="dom-repeat" items="{{_methods}}">
-        <tr on-click="_resourceClicked" class="hoverable clickable">
-          <td> <span>{{item.id}}</span> </td>
-          <td> <span>{{item.label}}</span> </td>
-          <td> <span>{{item.comment}}</span> </td>
-        </tr>
-      </template>
-    </table>
-
+      <div id="method-list-div">
+        <div class="resource-titles">{{localize('methods')}}</div>
+        <table>
+          <tr class="method-title">
+            <th> Id </th>
+            <th> Label </th>
+            <th> Description </th>
+            <th></th><th></th>
+          </tr>
+          <template is="dom-repeat" items="{{_methods}}">
+            <tr class="hoverable clickable">
+              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+              <td style="width:15px">
+                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+              </td>
+              <td style="width:15px">
+                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
+              </td>
+            </tr>
+          </template>
+        </table>
+      </div>
   </template>
 
   <script>
@@ -410,18 +455,28 @@
       },
 
       listeners: {
-        'loadResource': '_loadResource',
-        'editIcon.click': '_switchToEditMode',
-        'editCancelIcon.click': '_switchToNotEditMode',
-        'editSubmitIcon.click': '_submitBaseChanges'
+        'loadResource': '_loadResource'
       },
 
       behaviors: [
         Polymer.AppLocalizeBehavior
       ],
 
+      /** ================================================================== **/
+      /**  INITIALIZATION                                                    **/
+
+      /**
+       *
+       *
+       * @method ready
+       */
       ready: function() {},
 
+      /**
+       *
+       *
+       * @method attached
+       */
       attached: function() {
         // Load i18n json.
         this.loadResources(this.resolveUrl('./languages/locales.json'));
@@ -439,80 +494,18 @@
         this.set('_storedTraces', []);
         this.set('_computedTraces', []);
         this.set('_traceModels', []);
+        this.set('_methods', []);
         // If we use a resoure-loader, well, we let it load the resources then.
-        if (this.taaabsCentralLoading)
+        if (this.taaabsCentralLoading){
           this.fire('GET_RESOURCE', {
             url: this.baseUrl,
             obj: "_base"
           });
+        }
         // Otherwise, set _base with a new Samotrace.Base.
         else
           this.set('_base', new Samotraces.Ktbs.Base(this.baseUrl));
 
-      },
-
-      /**
-       * Triggered when a resource is clicked. Fires `RESOURCE_SELECTED` with the resource object.
-       *
-       * @param {!required} e (Event) The click event.
-       *
-       * @method _resourceClicked
-       */
-      _resourceClicked: function(e) {
-        var res = e.model.item;
-        res.uri = this._base.getAbsoluteURLFromRelative(this._base.uri, res.id);
-        this.fire('RESOURCE_SELECTED', {
-          "resource": res,
-          "which": e.which
-        });
-      },
-
-      /**
-       * Change some css to display the edit panel
-       *
-       * @method _switchToEditMode
-       */
-      _switchToEditMode: function() {
-        this.$.visuMode.style.opacity = 0;
-        this.$.visuMode.style.pointerEvents = 'none';
-        this.$.editMode.style.opacity = 1;
-        this.$.editMode.style.pointerEvents = 'auto';
-      },
-
-      /**
-       * Change some css to hide the edit panel
-       *
-       * @method _switchToNotEditMode
-       */
-      _switchToNotEditMode: function() {
-        this.$.visuMode.style.opacity = 1;
-        this.$.visuMode.style.pointerEvents = 'auto';
-        this.$.editMode.style.opacity = 0;
-        this.$.editMode.style.pointerEvents = 'none';
-      },
-
-      /**
-       * PUT the new base params (label and notes).
-       *
-       * @method _submitBaseChanges
-       */
-      _submitBaseChanges: function() {
-        // Init the new attributes to PUT in the base.
-        var obj = [
-          ["label", this._baseLabel],
-          ["http://www.w3.org/2000/01/rdf-schema#comment", [this._baseComment]]
-        ];
-        // Set the new attributes of the base
-        this._base.modify_attributes(obj).then(function(response) {
-            this.set('_base.label', that._base.label);
-            this.set('_baseLabel', that._base.label);
-            this.set('_base.comment', that._base.comment);
-            this.set('_baseComment', that._base.comment);
-            this._switchToNotEditMode();
-          }.bind(this))
-          .catch(function(err) {
-            console.log(err);
-          });
       },
 
       /**
@@ -547,22 +540,109 @@
             resources[i].comment = resources[i]['rdf:comments'][0];
           switch (resources[i]['@type']) {
             case 'Base':
+              this.$['base-list-div'].style.display = 'block';
               this.push('_bases', resources[i]);
               break;
             case 'StoredTrace':
+              this.$['stored-trace-list-div'].style.display = 'block';
               this.push('_storedTraces', resources[i]);
               break;
             case 'ComputedTrace':
+              this.$['computed-trace-list-div'].style.display = 'block';
               this.push('_computedTraces', resources[i]);
               break;
             case 'TraceModel':
+              this.$['model-list-div'].style.display = 'block';
               this.push('_traceModels', resources[i]);
               break;
             case 'Method':
+              this.$['method-list-div'].style.display = 'block';
               this.push('_methods', resources[i]);
               break;
           }
         }
+      },
+
+      /** ================================================================== **/
+      /**  BASE MODIFY                                                       **/
+
+      /**
+       * Toggle the modify-base dialog.
+       *
+       * @method _onEditClick
+       */
+      _onEditClick: function(){
+        this.set('_baseLabel', this._base.label);
+        this.set('_baseComment', this._base.comment);
+        this.$['modify-base-dialog'].toggle();
+      },
+
+      /**
+       * Hide the modify-base dialog.
+       *
+       * @method _onEditCancelClick
+       */
+      _onEditCancelClick: function(){
+        this.$['modify-base-dialog'].close();
+      },
+
+      /**
+       * Modify the base.
+       *
+       * @method _onEditConfirmClick
+       */
+      _onEditConfirmClick: function(){
+        this.$['modify-base-progress'].set('disabled', false);
+        // Init the new attributes to PUT in the base.
+        var obj = [
+          ["label", this._baseLabel],
+          ["http://www.w3.org/2000/01/rdf-schema#comment", [this._baseComment]]
+        ];
+        // Set the new attributes of the base
+        this._base.modify_attributes(obj).then(function(response) {
+            this.set('_base.label', this._base.label);
+            this.set('_base.comment', this._base.comment);
+            this.$['modify-base-progress'].set('disabled', true);
+            this.$['modify-base-dialog'].close();
+          }.bind(this))
+          .catch(function(err) {
+            console.log(err);
+          });
+      },
+
+      /** ================================================================== **/
+      /**  RESOURCE SELECTION                                                **/
+
+      /**
+       * Triggered when a resource is clicked. Fires `RESOURCE_SELECTED` with the resource object.
+       *
+       * @param {!required} e (Event) The click event.
+       *
+       * @method _resourceClicked
+       */
+      _resourceClicked: function(e) {
+        var res = e.model.item;
+        res.uri = this._base.getAbsoluteURLFromRelative(this._base.uri, res.id);
+        this.fire('resource-selected', {
+          "resource": res,
+          "where": "here"
+        });
+      },
+
+      /**
+       *
+       *
+       * @param {!required} e (Event) Event fired.
+       *
+       * @method _openInNewWindow
+       */
+      _openInNewWindow: function(e){
+        var res = e.model.item;
+        res.uri = this._base.getAbsoluteURLFromRelative(this._base.uri, res.id);
+        this.fire('resource-selected', {
+          "resource": res,
+          "where": "new-tab"
+        });
       },
 
       /**
@@ -577,7 +657,7 @@
           var res = new Samotraces.Ktbs.Resource(this._base.uri + e.model.item['@id']);
           res.remove()
             .then(function(msg) {
-              this.fire('RESOURCE_CHANGED');
+              this.fire('resource-changed');
             }.bind(this))
             .catch(function(err) {
               console.log(err);
