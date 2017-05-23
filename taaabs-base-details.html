@@ -1,22 +1,24 @@
-<!-- THEME -->
 <link rel="import" href="../taaabs-themes/taaabs-theme.html">
-<!-- POLYMER APP HELPERS -->
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
-<!-- Iron elements -->
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
-<!-- Paper elements -->
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-progress/paper-progress.html">
-<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
 
-<!-- ENOUGH WITH THE DEPENDENCIES !! -->
+<!--
+`<taaabs-base-details>` is a graphical element that displays the children of a base in a table. It also allows to edit the table metadatas (label, comments).
+
+In typical use, bind the `<taaabs-base-details>` to a base url.
+
+        <taaabs-base-details  base-url="[[baseUrl]]" language="[[language]]">
+        </taaabs-base-details>
+
+-->
 <dom-module id="taaabs-base-details">
-
-
   <template>
     <style include="taaabs-theme"></style>
     <style>
@@ -102,7 +104,6 @@
       #stored-trace-list-div {
         display: none;
       }
-
     </style>
 
 
@@ -291,7 +292,7 @@
        *    }
        *
        * If mouse_button = 2, then it's a middle-click
-       * @event RESOURCE_SELECTED
+       * @event resource-selected
        */
 
       properties: {
@@ -306,6 +307,18 @@
           type: String,
           notify: true,
           value: ""
+        },
+
+        /**
+         * List of the builtin methods aailables in the base.
+         *
+         * @attribute builtinMethods
+         * @type Array
+         */
+        builtinMethods: {
+         type: Array,
+         notify: true,
+         value: []
         },
 
         /**
@@ -518,6 +531,7 @@
           this._base.load_properties(['label', 'comment'])
             .then(function(resources) {
               this._setResources(resources);
+              this._addBuiltinMethods();
             }.bind(this))
             .catch(function(err) {
               console.log(err);
@@ -534,7 +548,8 @@
        */
       _setResources: function(resources) {
         for (var i in resources) {
-          resources[i].id = resources[i]['@id'];
+          resources[i].id  = resources[i]['@id'];
+          resources[i].uri = this._base.getAbsoluteURLFromRelative(this._base.uri, resources[i].id );
           //TODO Replace Array position by real String.
           if (resources[i]['rdf:comments'])
             resources[i].comment = resources[i]['rdf:comments'][0];
@@ -560,6 +575,24 @@
               this.push('_methods', resources[i]);
               break;
           }
+        }
+      },
+
+      /**
+       * Add the builtin methods to the list of resources.
+       *
+       * @method _addBuiltinMethods
+       */
+      _addBuiltinMethods: function() {
+        for(var i in this.builtinMethods){
+          var m = {
+            'id': this.builtinMethods[i],
+            '@type': 'Method',
+            'label': '[ BUILTIN METHOD ]',
+            'uri': 'http://liris.cnrs.fr/silex/2009/ktbs#'+this.builtinMethods[i]
+          }
+          this.$['method-list-div'].style.display = 'block';
+          this.push('_methods', m);
         }
       },
 
@@ -614,7 +647,7 @@
       /**  RESOURCE SELECTION                                                **/
 
       /**
-       * Triggered when a resource is clicked. Fires `RESOURCE_SELECTED` with the resource object.
+       * Triggered when a resource is clicked. Fires `resource-selected` with the resource object.
        *
        * @param {!required} e (Event) The click event.
        *
@@ -622,7 +655,6 @@
        */
       _resourceClicked: function(e) {
         var res = e.model.item;
-        res.uri = this._base.getAbsoluteURLFromRelative(this._base.uri, res.id);
         this.fire('resource-selected', {
           "resource": res,
           "where": "here"
