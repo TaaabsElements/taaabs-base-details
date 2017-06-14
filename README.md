@@ -1,10 +1,23 @@
-# taaabs-base-details
-`<taaabs-base-details>` is a graphical element that load and display the informations of a base,
-and its content (traces, models..).
+# Taaabs-Base-Details
 
-Example:
+`<taaabs-base-details>` is a graphical element that displays the children of a base in a table.
+It also allows to edit the table metadatas (label, comments).
 
-    <taaabs-base-details base-url="http://localhost:8000/ktbs/base1/" language="{{i18n}}">
-    </taaabs-base-details>
+In typical use, bind the `<taaabs-base-details>` to a base url.
 
-Source files: <a href="https://github.com/TaaabsElements/taaabs-base-details" target="_blank">taaabs-base-details</a>
+        <taaabs-base-details  base-url="[[baseUrl]]" language="[[language]]">
+        </taaabs-base-details>
+
+or
+        var elem = new TAAABS.BaseDetails("the_base_url");
+
+----
+
+## TODO
+
+  - Better managing of the resources comments.
+  - Better managing of Built-in Methods.
+  - Load the base in case of not using central laoding.
+  - Replace <iron-autogrow-textarea> with <paper-textarea>
+
+For more information, see [the <taaabs-base-details> page](https://taaabselements.github.io/#/components/detail/taaabs-base-details)

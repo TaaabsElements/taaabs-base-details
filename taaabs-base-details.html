@@ -1,22 +1,37 @@
-<link rel="import" href="../taaabs-themes/taaabs-theme.html">
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-autogrow-textarea/iron-autogrow-textarea.html">
-<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../taaabs-themes/taaabs-theme.html">
 
 <!--
-`<taaabs-base-details>` is a graphical element that displays the children of a base in a table. It also allows to edit the table metadatas (label, comments).
+
+# Taaabs-Base-Details
+
+`<taaabs-base-details>` is a graphical element that displays the children of a base in a table.
+It also allows to edit the table metadatas (label, comments).
 
 In typical use, bind the `<taaabs-base-details>` to a base url.
 
         <taaabs-base-details  base-url="[[baseUrl]]" language="[[language]]">
         </taaabs-base-details>
 
+or
+        var elem = new TAAABS.BaseDetails("the_base_url");
+
+----
+
+## TODO
+
+  - Better managing of the resources comments.
+  - Better managing of Built-in Methods.
+  - Load the base in case of not using central laoding.
+  - Replace <iron-autogrow-textarea> with <paper-textarea>
 -->
 <dom-module id="taaabs-base-details">
   <template>
@@ -106,196 +121,186 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
       }
     </style>
 
-
-      <paper-dialog id="modify-base-dialog" class="flex-vertical">
-        <div class="flexchild">
-          <h2>[[localize('edit-your-base')]]</h2>
-          <paper-input label="[[localize('base-label')]]" value="{{_baseLabel}}"></paper-input><br/>
-          <span class="small fgGrey">[[localize('base-comment')]]</span><br/>
-          <iron-autogrow-textarea value="{{_baseComment}}"></iron-autogrow-textarea>
-          <div class="buttons">
-            <paper-button on-click="_onEditCancelClick">[[localize('editCancelIcon')]]</paper-button>
-            <paper-button on-click="_onEditConfirmClick" id="base-modify-confirm-button">[[localize('editSubmitIcon')]]</paper-button>
-          </div>
+    <!-- Base Metadatas Modifitcation -->
+    <paper-dialog id="modify-base-dialog" class="flex-vertical">
+      <div class="flexchild">
+        <h2>[[localize('edit-your-base')]]</h2>
+        <paper-input label="[[localize('base-label')]]" value="{{_baseLabel}}"></paper-input><br/>
+        <span class="small fgGrey">[[localize('base-comment')]]</span><br/>
+        <iron-autogrow-textarea value="{{_baseComment}}"></iron-autogrow-textarea>
+        <div class="buttons">
+          <paper-button on-click="_onEditCancelClick">[[localize('editCancelIcon')]]</paper-button>
+          <paper-button on-click="_onEditConfirmClick" id="base-modify-confirm-button">[[localize('editSubmitIcon')]]</paper-button>
         </div>
-        <paper-progress id="modify-base-progress" class="progress" indeterminate disabled></paper-progress>
-      </paper-dialog>
-
-      <div style="padding-top: 24px">
-        <iron-icon icon="icons:create" title="{{localize('editIcon')}}" class="editIcons" on-click="_onEditClick"></iron-icon>
-
-
-        <a id="base-header" href="[[_base.uri]]" target="_blank">[[_base.uri]]</a> <br/>
-        <span id="base-header-label"> [[_base.label]]   </span>
-        <p>    [[_base.comment]] </p>
-
       </div>
+      <paper-progress id="modify-base-progress" class="progress" indeterminate disabled></paper-progress>
+    </paper-dialog>
 
-      <div id="base-list-div">
-        <!-- Child Base List -->
-        <div class="resource-titles">Bases</div>
-        <table>
-          <tr class="base-title">
-            <th> Id </th>
-            <th> Label </th>
-            <th> Description </th>
-            <th></th><th></th>
+    <!-- Base Metadatas Display -->
+    <div style="padding-top: 24px">
+      <iron-icon icon="icons:create" title="{{localize('editIcon')}}" class="editIcons" on-click="_onEditClick"></iron-icon>
+      <a id="base-header" href="[[_base.uri]]" target="_blank">[[_base.uri]]</a> <br/>
+      <span id="base-header-label"> [[_base.label]]   </span>
+      <p>    [[_base.comment]] </p>
+    </div>
+
+    <!-- Child Base List -->
+    <div id="base-list-div">
+      <div class="resource-titles">Bases</div>
+      <table>
+        <tr class="base-title">
+          <th> Id </th>
+          <th> Label </th>
+          <th> Description </th>
+          <th></th><th></th>
+        </tr>
+        <template is="dom-repeat" items="{{_bases}}">
+          <tr class="hoverable clickable">
+            <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+            <td style="width:15px">
+              <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                         class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+            </td>
+            <td style="width:15px">
+              <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                         class="fgError fgErrorH clickable hoverable small"></iron-icon>
+            </td>
           </tr>
-          <template is="dom-repeat" items="{{_bases}}">
-            <tr class="hoverable clickable">
-              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
-              <td style="width:15px">
-                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
-                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
-              </td>
-              <td style="width:15px">
-                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
-                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
-              </td>
-            </tr>
-          </template>
-        </table>
-      </div>
+        </template>
+      </table>
+    </div>
 
-      <!-- Stored Traces List -->
-
-      <div id="stored-trace-list-div">
-        <div class="resource-titles">{{localize('storedTraces')}}</div>
-        <table>
-          <tr class="stored-trace-title">
-            <th> Id </th>
-            <th> Label </th>
-            <th> Description </th>
-            <th></th><th></th>
+    <!-- Stored Traces List -->
+    <div id="stored-trace-list-div">
+      <div class="resource-titles">{{localize('storedTraces')}}</div>
+      <table>
+        <tr class="stored-trace-title">
+          <th> Id </th>
+          <th> Label </th>
+          <th> Description </th>
+          <th></th><th></th>
+        </tr>
+        <template is="dom-repeat" items="{{_storedTraces}}">
+          <tr class="hoverable clickable">
+            <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+            <td style="width:15px">
+              <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                         class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+            </td>
+            <td style="width:15px">
+              <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                         class="fgError fgErrorH clickable hoverable small"></iron-icon>
+            </td>
           </tr>
-          <template is="dom-repeat" items="{{_storedTraces}}">
-            <tr class="hoverable clickable">
-              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
-              <td style="width:15px">
-                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
-                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
-              </td>
-              <td style="width:15px">
-                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
-                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
-              </td>
-            </tr>
-          </template>
-        </table>
-      </div>
+        </template>
+      </table>
+    </div>
 
-      <!-- Computed Traces List -->
-
-      <div id="computed-trace-list-div">
-        <div class="resource-titles">{{localize('computedTraces')}}</div>
-        <table>
-          <tr class="computed-trace-title">
-            <th> Id </th>
-            <th> Label </th>
-            <th> Description </th>
-            <th></th><th></th>
+    <!-- Computed Traces List -->
+    <div id="computed-trace-list-div">
+      <div class="resource-titles">{{localize('computedTraces')}}</div>
+      <table>
+        <tr class="computed-trace-title">
+          <th> Id </th>
+          <th> Label </th>
+          <th> Description </th>
+          <th></th><th></th>
+        </tr>
+        <template is="dom-repeat" items="{{_computedTraces}}">
+          <tr class="hoverable clickable">
+            <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+            <td style="width:15px">
+              <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                         class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+            </td>
+            <td style="width:15px">
+              <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                         class="fgError fgErrorH clickable hoverable small"></iron-icon>
+            </td>
           </tr>
-          <template is="dom-repeat" items="{{_computedTraces}}">
-            <tr class="hoverable clickable">
-              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
-              <td style="width:15px">
-                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
-                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
-              </td>
-              <td style="width:15px">
-                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
-                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
-              </td>
-            </tr>
-          </template>
-        </table>
-      </div>
+        </template>
+      </table>
+    </div>
 
-      <!-- Trace Model List -->
-
-      <div id="model-list-div">
-        <div class="resource-titles">{{localize('traceModels')}}</div>
-        <table>
-          <tr class="model-title">
-            <th> Id </th>
-            <th> Label </th>
-            <th> Description </th>
-            <th></th><th></th>
+    <!-- Trace Model List -->
+    <div id="model-list-div">
+      <div class="resource-titles">{{localize('traceModels')}}</div>
+      <table>
+        <tr class="model-title">
+          <th> Id </th>
+          <th> Label </th>
+          <th> Description </th>
+          <th></th><th></th>
+        </tr>
+        <template is="dom-repeat" items="{{_traceModels}}">
+          <tr class="hoverable clickable">
+            <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+            <td style="width:15px">
+              <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                         class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+            </td>
+            <td style="width:15px">
+              <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                         class="fgError fgErrorH clickable hoverable small"></iron-icon>
+            </td>
           </tr>
-          <template is="dom-repeat" items="{{_traceModels}}">
-            <tr class="hoverable clickable">
-              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
-              <td style="width:15px">
-                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
-                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
-              </td>
-              <td style="width:15px">
-                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
-                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
-              </td>
-            </tr>
-          </template>
-        </table>
-      </div>
+        </template>
+      </table>
+    </div>
 
-      <!-- Trace Model List -->
-
-      <div id="method-list-div">
-        <div class="resource-titles">{{localize('methods')}}</div>
-        <table>
-          <tr class="method-title">
-            <th> Id </th>
-            <th> Label </th>
-            <th> Description </th>
-            <th></th><th></th>
+    <!-- Trace Model List -->
+    <div id="method-list-div">
+      <div class="resource-titles">{{localize('methods')}}</div>
+      <table>
+        <tr class="method-title">
+          <th> Id </th>
+          <th> Label </th>
+          <th> Description </th>
+          <th></th><th></th>
+        </tr>
+        <template is="dom-repeat" items="{{_methods}}">
+          <tr class="hoverable clickable">
+            <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
+            <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
+            <td style="width:15px">
+              <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
+                         class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
+            </td>
+            <td style="width:15px">
+              <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
+                         class="fgError fgErrorH clickable hoverable small"></iron-icon>
+            </td>
           </tr>
-          <template is="dom-repeat" items="{{_methods}}">
-            <tr class="hoverable clickable">
-              <td on-click="_resourceClicked"> <span>{{item.id}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.label}}</span> </td>
-              <td on-click="_resourceClicked"> <span>{{item.comment}}</span> </td>
-              <td style="width:15px">
-                <iron-icon on-click='_openInNewWindow' icon="icons:open-in-browser" title="{{localize('open-in-tab')}}"
-                           class="fgBlack fgBlackH clickable hoverable small"></iron-icon>
-              </td>
-              <td style="width:15px">
-                <iron-icon on-click='_deleteResource' icon="icons:close" title="{{localize('delete')}}"
-                           class="fgError fgErrorH clickable hoverable small"></iron-icon>
-              </td>
-            </tr>
-          </template>
-        </table>
-      </div>
+        </template>
+      </table>
+    </div>
   </template>
 
   <script>
-    Polymer({
+    TAAABS.BaseDetails = Polymer({
       is: 'taaabs-base-details',
 
       /**
        * Fired if a resource has been clicked.
        *
-       * Returns an object :
-       *
-       *    {
-       *      "resourceURL":<url_of_the_resource>,
-       *      "resourceType":"StoredTrace" || "ComputedTrace" || "TraceModel",
-       *      "which": <mouse_button>
-       *    }
-       *
-       * If mouse_button = 2, then it's a middle-click
+       * @param (Object) resource The resource selected.
+       * @param (String) where Either "new-tab" or "here", which would respectively means the user open the new resource in a new tab or in the current one.
        * @event resource-selected
        */
 
       properties: {
+
+        /** ================================================================ **/
+        /**  Public Properties                                               **/
 
         /**
          * The base URL.
@@ -322,6 +327,33 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
         },
 
         /**
+        * Set to true if the taaabs-base-overview must work with a `taaabs-resource-loader`. False otherwise.
+        *
+        * @attribute taaabsCentralLoading
+        * @type Boolean
+        */
+        taaabsCentralLoading: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+
+        /**
+         * Localization.
+         * fr, en.
+         *
+         * @attribute language
+         * @type String
+         */
+        language: {
+          type: String,
+          notify: true,
+        },
+
+        /** ================================================================ **/
+        /**  Private Properties                                              **/
+
+        /**
          * The base label.
          *
          * @attribute _baseLabel
@@ -334,9 +366,9 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
         },
 
         /**
-         * The base notes.
+         * The base comments.
          *
-         * @attribute _baseNote
+         * @attribute _baseComment
          * @type String
          */
         _baseComment: {
@@ -426,45 +458,7 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
           value: function() {
             return [];
           }
-        },
-
-        /**
-         * Index of the page of the modal div.
-         * 0 for base creation page, etc.
-         *
-         * @attribute _modalIndex
-         * @type Number
-         */
-        _modalIndex: {
-          type: Number,
-          notify: true,
-          value: 0
-        },
-
-        /**
-         * Set to true if the taaabs-base-overview must work with a `taaabs-resource-loader`. False otherwise.
-         *
-         * @attribute taaabsCentralLoading
-         * @type Boolean
-         */
-        taaabsCentralLoading: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
-
-        /**
-         * Localization.
-         * fr, en.
-         *
-         * @attribute language
-         * @type String
-         */
-        language: {
-          type: String,
-          notify: true,
-        },
-
+        }
       },
 
       listeners: {
@@ -476,17 +470,22 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
       ],
 
       /** ================================================================== **/
-      /**  INITIALIZATION                                                    **/
+      /**  Contructors / Init / Destructor                                   **/
 
       /**
+       * Default constructor. Calls `_emptyAllProperties`.
        *
+       * @param {String} baseUrl Optionnal url of the base.
        *
-       * @method ready
+       * @method factoryImpl
        */
-      ready: function() {},
+      factoryImpl: function(baseUrl) {
+        this._emptyAllProperties();
+        this.set('baseUrl', baseUrl);
+      },
 
       /**
-       *
+       * Loads the I18N resources.
        *
        * @method attached
        */
@@ -496,18 +495,12 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
       },
 
       /**
-       * Reset the base and resources arrays. Load every resource of the base.
+       * Loads the base.
        *
        * @method refresh
        */
       refresh: function() {
-        // RESET ALL THE THINGS !!
-        this.set('_base', null);
-        this.set('_bases', []);
-        this.set('_storedTraces', []);
-        this.set('_computedTraces', []);
-        this.set('_traceModels', []);
-        this.set('_methods', []);
+        this._emptyAllProperties();
         // If we use a resoure-loader, well, we let it load the resources then.
         if (this.taaabsCentralLoading){
           this.fire('GET_RESOURCE', {
@@ -518,11 +511,38 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
         // Otherwise, set _base with a new Samotrace.Base.
         else
           this.set('_base', new Samotraces.Ktbs.Base(this.baseUrl));
-
       },
 
       /**
-       * Triggered when `_base` changes. Load its child resources.
+       * Calls `_emptyAllProperties`.
+       *
+       * @method clear
+       */
+      clear: function(){
+        this._emptyAllProperties();
+      },
+
+      /**
+       * Set all the properties to their default value.
+       *
+       * @method _emptyAllProperties
+       */
+      _emptyAllProperties: function(){
+        this.set('_base', null);
+        this.set('_baseLabel', "");
+        this.set('_baseComment', "");
+        this.set('_bases', []);
+        this.set('_storedTraces', []);
+        this.set('_computedTraces', []);
+        this.set('_traceModels', []);
+        this.set('_methods', []);
+      },
+
+      /** ================================================================== **/
+      /**  Base Resources Loading                                            **/
+
+      /**
+       * Called when `_base` changes. Load its child resources.
        *
        * @method _baseChanged
        */
@@ -550,7 +570,7 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
         for (var i in resources) {
           resources[i].id  = resources[i]['@id'];
           resources[i].uri = this._base.getAbsoluteURLFromRelative(this._base.uri, resources[i].id );
-          //TODO Replace Array position by real String.
+
           if (resources[i]['rdf:comments'])
             resources[i].comment = resources[i]['rdf:comments'][0];
           switch (resources[i]['@type']) {
@@ -597,7 +617,7 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
       },
 
       /** ================================================================== **/
-      /**  BASE MODIFY                                                       **/
+      /**  Base Modify                                                       **/
 
       /**
        * Toggle the modify-base dialog.
@@ -644,7 +664,7 @@ In typical use, bind the `<taaabs-base-details>` to a base url.
       },
 
       /** ================================================================== **/
-      /**  RESOURCE SELECTION                                                **/
+      /**  Resource Selection                                                **/
 
       /**
        * Triggered when a resource is clicked. Fires `resource-selected` with the resource object.

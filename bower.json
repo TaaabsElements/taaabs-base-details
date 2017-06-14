@@ -18,13 +18,20 @@
   "license": "https://github.com/TaaabsElements/taaabs-base-details/LICENSE",
   "dependencies": {
     "polymer": "Polymer/polymer#<2.*",
-    "taaabs-base-create": "TaaabsElements/taaabs-base-create",
-    "app-localize-behavior": "PolymerElements/app-localize-behavior#<2.*",
-    "iron-pages": "PolymerElements/iron-pages#<2.*",
-    "iron-icons": "PolymerElements/iron-icons#<2.*"
+    "app-localize-behavior" : "PolymerElements/app-localize-behavior#<2.*",
+    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#<2.*",
+    "iron-icon"             : "PolymerElements/iron-icon#<2.*",
+    "iron-icons"            : "PolymerElements/iron-icons#<2.*",
+    "iron-pages"            : "PolymerElements/iron-pages#<2.*",
+    "paper-button"          : "PolymerElements/paper-button#<2.*",
+    "paper-dialog"          : "PolymerElements/paper-dialog#<2.*",
+    "paper-input"           : "PolymerElements/paper-input#<2.*",
+    "paper-progress"        : "PolymerElements/paper-progress#<2.*",
+    "taaabs-taaabs"         : "TaaabsElements/taaabs-taaabs",
+    "taaabs-theme"          : "TaaabsElements/taaabs-theme"
   },
   "devDependencies": {
-    "iron-component-page": "polymerelements/iron-component-page#^1.0.0",
+    "iron-component-page": "polymerelements/iron-component-page#<2.*",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   },
   "ignore": []
