@@ -28,7 +28,7 @@
     "paper-input"           : "PolymerElements/paper-input#<2.*",
     "paper-progress"        : "PolymerElements/paper-progress#<2.*",
     "taaabs-taaabs"         : "TaaabsElements/taaabs-taaabs",
-    "taaabs-theme"          : "TaaabsElements/taaabs-theme"
+    "taaabs-themes"          : "TaaabsElements/taaabs-themes"
   },
   "devDependencies": {
     "iron-component-page": "polymerelements/iron-component-page#<2.*",
